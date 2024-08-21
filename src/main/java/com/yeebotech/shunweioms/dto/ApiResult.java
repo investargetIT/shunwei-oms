@@ -19,8 +19,8 @@ public class ApiResult<T> {
     }
 
     // 静态工厂方法用于成功响应
-    public static <T> ApiResult<T> success(T data, String message) {
-        return new ApiResult<>("success", 200, message, data, null);
+    public static <T> ApiResult<T> success(T data,int code, String message) {
+        return new ApiResult<>("success", code, message, data, null);
     }
 
     // 静态工厂方法用于错误响应

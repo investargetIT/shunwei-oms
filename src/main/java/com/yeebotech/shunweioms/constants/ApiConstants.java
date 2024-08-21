@@ -27,6 +27,9 @@ public class ApiConstants {
     public static final int CODE_NOT_FOUND = 404;
     public static final int CODE_INTERNAL_SERVER_ERROR = 500;
 
+
+    // Business Success Codes (if applicable)
+    public static final int CODE_BUSINESS_SUCCESS = 10000; // Example custom business error code
     // Business Error Codes (if applicable)
     public static final int CODE_BUSINESS_ERROR = 1000; // Example custom business error code
 }

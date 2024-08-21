@@ -37,6 +37,7 @@ public class SupplierController {
             List<Supplier> suppliers = supplierService.findAllSuppliers();
             ApiResult<List<Supplier>> response = ApiResult.success(
                     suppliers,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
                     ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -62,6 +63,7 @@ public class SupplierController {
             if (supplier.isPresent()) {
                 ApiResult<Supplier> response = ApiResult.success(
                         supplier.get(),
+                        ApiConstants.CODE_BUSINESS_SUCCESS,
                         ApiConstants.MESSAGE_SUCCESS_SUPPLIER_RETRIEVED
                 );
                 return new ResponseEntity<>(response, HttpStatus.OK);
@@ -94,6 +96,7 @@ public class SupplierController {
             Supplier createdSupplier = supplierService.saveSupplier(supplier);
             ApiResult<Supplier> response = ApiResult.success(
                     createdSupplier,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
                     ApiConstants.MESSAGE_SUCCESS_SUPPLIER_CREATED
             );
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -126,6 +129,7 @@ public class SupplierController {
             if (updatedSupplier.isPresent()) {
                 ApiResult<Supplier> response = ApiResult.success(
                         updatedSupplier.get(),
+                        ApiConstants.CODE_BUSINESS_SUCCESS,
                         ApiConstants.MESSAGE_SUCCESS_SUPPLIER_UPDATED
                 );
                 return new ResponseEntity<>(response, HttpStatus.OK);
@@ -157,6 +161,7 @@ public class SupplierController {
             supplierService.deleteSupplier(id);
             ApiResult<Void> response = ApiResult.success(
                     null,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
                     ApiConstants.MESSAGE_SUCCESS_SUPPLIER_DELETED
             );
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
