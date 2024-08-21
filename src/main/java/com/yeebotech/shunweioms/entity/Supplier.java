@@ -21,7 +21,7 @@ public class Supplier {
     @Column(name = "bank_account")
     private String bankAccount;
 
-    @Column(name = "partnership_case")  // 更新字段名
+    @Column(name = "partnership_case")
     private String partnershipCase;
 
     @Column(name = "attribute")

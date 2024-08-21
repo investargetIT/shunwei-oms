@@ -1,7 +1,17 @@
 package com.yeebotech.shunweioms.controller;
 
+import com.yeebotech.shunweioms.constants.ApiConstants;
+import com.yeebotech.shunweioms.dto.ApiResult;
 import com.yeebotech.shunweioms.entity.Supplier;
 import com.yeebotech.shunweioms.service.SupplierService;
+import com.yeebotech.shunweioms.exception.BusinessException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,30 +27,146 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
+    @Operation(summary = "Retrieve all suppliers", description = "Fetches a list of all suppliers")
+    @ApiResponse(responseCode = "200", description = "List of suppliers",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Supplier.class)))
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")
     @GetMapping
-    public List<Supplier> getAllSuppliers() {
-        return supplierService.findAllSuppliers();
+    public ResponseEntity<ApiResult<List<Supplier>>> getAllSuppliers() {
+        try {
+            List<Supplier> suppliers = supplierService.findAllSuppliers();
+            ApiResult<List<Supplier>> response = ApiResult.success(
+                    suppliers,
+                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
+            );
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResult<List<Supplier>> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    @Operation(summary = "Retrieve a supplier by ID", description = "Fetches a supplier by its ID")
+    @ApiResponse(responseCode = "200", description = "Supplier found",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Supplier.class)))
+    @ApiResponse(responseCode = "404", description = "Supplier not found")
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")
     @GetMapping("/{id}")
-    public Optional<Supplier> getSupplierById(@PathVariable Long id) {
-        return supplierService.findSupplierById(id);
+    public ResponseEntity<ApiResult<Supplier>> getSupplierById(@PathVariable Long id) {
+        try {
+            Optional<Supplier> supplier = supplierService.findSupplierById(id);
+            if (supplier.isPresent()) {
+                ApiResult<Supplier> response = ApiResult.success(
+                        supplier.get(),
+                        ApiConstants.MESSAGE_SUCCESS_SUPPLIER_RETRIEVED
+                );
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                ApiResult<Supplier> response = ApiResult.error(
+                        ApiConstants.CODE_NOT_FOUND,
+                        ApiConstants.MESSAGE_NO_SUPPLIER_WITH_ID,
+                        null
+                );
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResult<Supplier> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_SUPPLIER,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    @Operation(summary = "Create a new supplier", description = "Adds a new supplier to the system")
+    @ApiResponse(responseCode = "201", description = "Supplier created",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Supplier.class)))
+    @ApiResponse(responseCode = "400", description = "Bad Request")
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")
     @PostMapping
-    public Supplier createSupplier(@RequestBody Supplier supplier) {
-        return supplierService.saveSupplier(supplier);
+    public ResponseEntity<ApiResult<Supplier>> createSupplier(@RequestBody Supplier supplier) {
+        try {
+            Supplier createdSupplier = supplierService.saveSupplier(supplier);
+            ApiResult<Supplier> response = ApiResult.success(
+                    createdSupplier,
+                    ApiConstants.MESSAGE_SUCCESS_SUPPLIER_CREATED
+            );
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (BusinessException e) {
+            ApiResult<Supplier> response = ApiResult.error(
+                    e.getCode(),
+                    e.getMessage(),
+                    e.getErrorDetails()
+            );
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            ApiResult<Supplier> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_CREATE_SUPPLIER,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    @Operation(summary = "Update an existing supplier", description = "Updates the details of a supplier")
+    @ApiResponse(responseCode = "200", description = "Supplier updated",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Supplier.class)))
+    @ApiResponse(responseCode = "404", description = "Supplier not found")
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")
     @PutMapping("/{id}")
-    public Supplier updateSupplier(@PathVariable Long id, @RequestBody Supplier supplier) {
-        // Optionally, handle cases where the supplier does not exist
-        supplier.setId(id);
-        return supplierService.saveSupplier(supplier);
+    public ResponseEntity<ApiResult<Supplier>> updateSupplier(@PathVariable Long id, @RequestBody Supplier supplier) {
+        try {
+            Optional<Supplier> updatedSupplier = supplierService.updateSupplier(id, supplier);
+            if (updatedSupplier.isPresent()) {
+                ApiResult<Supplier> response = ApiResult.success(
+                        updatedSupplier.get(),
+                        ApiConstants.MESSAGE_SUCCESS_SUPPLIER_UPDATED
+                );
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                ApiResult<Supplier> response = ApiResult.error(
+                        ApiConstants.CODE_NOT_FOUND,
+                        ApiConstants.MESSAGE_NO_SUPPLIER_WITH_ID,
+                        null
+                );
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResult<Supplier> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_UPDATE_SUPPLIER,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    @Operation(summary = "Delete a supplier", description = "Removes a supplier from the system")
+    @ApiResponse(responseCode = "204", description = "Supplier deleted")
+    @ApiResponse(responseCode = "404", description = "Supplier not found")
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")
     @DeleteMapping("/{id}")
-    public void deleteSupplier(@PathVariable Long id) {
-        supplierService.deleteSupplier(id);
+    public ResponseEntity<ApiResult<Void>> deleteSupplier(@PathVariable Long id) {
+        try {
+            supplierService.deleteSupplier(id);
+            ApiResult<Void> response = ApiResult.success(
+                    null,
+                    ApiConstants.MESSAGE_SUCCESS_SUPPLIER_DELETED
+            );
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            ApiResult<Void> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_DELETE_SUPPLIER,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
