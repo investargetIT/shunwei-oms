@@ -2,19 +2,23 @@ package com.yeebotech.shunweioms.controller;
 
 import com.yeebotech.shunweioms.constants.ApiConstants;
 import com.yeebotech.shunweioms.dto.ApiResult;
+import com.yeebotech.shunweioms.dto.IdsRequest;
 import com.yeebotech.shunweioms.entity.Supplier;
 import com.yeebotech.shunweioms.service.SupplierService;
 import com.yeebotech.shunweioms.exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -174,4 +178,42 @@ public class SupplierController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Operation(summary = "Delete multiple suppliers", description = "Removes multiple suppliers from the system")
+    @ApiResponse(responseCode = "204", description = "Suppliers deleted")
+    @ApiResponse(responseCode = "400", description = "Bad Request")
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    @DeleteMapping("/batch")
+    public ResponseEntity<ApiResult<Void>> deleteSuppliers(@RequestBody IdsRequest idsRequest) {
+        try {
+            List<Long> ids = idsRequest.getIds();
+            System.out.println(idsRequest);
+            if (ids == null || ids.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResult.error(400, "IDs are required", "The provided IDs list is either null or empty."));
+            }
+            supplierService.deleteSuppliers(ids);
+            ApiResult<Void> response = ApiResult.success(
+                    null,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
+                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_DELETED
+            );
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            ApiResult<Void> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_DELETE_SUPPLIERS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Search for suppliers", description = "Search for suppliers based on various parameters")
+    @GetMapping("/search")
+    public List<Supplier> searchSuppliers(
+            @Parameter(description = "Search parameters as key-value pairs")
+            @RequestParam Map<String, Object> searchParams) {
+        return supplierService.searchSuppliers(searchParams);
+    }
 }
+
