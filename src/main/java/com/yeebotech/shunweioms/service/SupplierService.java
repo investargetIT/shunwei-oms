@@ -1,6 +1,9 @@
 package com.yeebotech.shunweioms.service;
 
 import com.yeebotech.shunweioms.entity.Supplier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +18,6 @@ public interface SupplierService {
     // 新增批量删除方法
     void deleteSuppliers(List<Long> ids);
 
-    List<Supplier> searchSuppliers(Map<String, Object> searchParams);
+    Page<Supplier> searchSuppliers(Map<String, Object> searchParams, Pageable pageable);
 
 }

@@ -5,6 +5,8 @@ import com.yeebotech.shunweioms.repository.SupplierRepository;
 import com.yeebotech.shunweioms.specification.SupplierSpecification;
 import com.yeebotech.shunweioms.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +63,7 @@ public class SupplierServiceImpl implements SupplierService {
 
     // 实现动态搜索
     @Override
-    public List<Supplier> searchSuppliers(Map<String, Object> searchParams) {
+    public Page<Supplier> searchSuppliers(Map<String, Object> searchParams, Pageable pageable) {
         Specification<Supplier> spec = Specification.where(null);
 
         if (searchParams.containsKey("name")) {
@@ -125,6 +127,6 @@ public class SupplierServiceImpl implements SupplierService {
             spec = spec.and(SupplierSpecification.hasUpdatedAt((LocalDateTime) searchParams.get("updatedAt")));
         }
 
-        return supplierRepository.findAll(spec);
+        return supplierRepository.findAll(spec, pageable);
     }
 }

@@ -9,6 +9,9 @@ import com.yeebotech.shunweioms.exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -207,12 +210,30 @@ public class SupplierController {
         }
     }
 
-    @Operation(summary = "Search for suppliers", description = "Search for suppliers based on various parameters")
+    @Operation(summary = "Search for suppliers", description = "Search for suppliers based on various parameters with pagination")
     @GetMapping("/search")
-    public List<Supplier> searchSuppliers(
-            @Parameter(description = "Search parameters as key-value pairs")
-            @RequestParam Map<String, Object> searchParams) {
-        return supplierService.searchSuppliers(searchParams);
+    public ResponseEntity<ApiResult<Page<Supplier>>> searchSuppliers(
+            @RequestParam Map<String, Object> searchParams,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        try {
+            Page<Supplier> suppliersPage = supplierService.searchSuppliers(searchParams, pageable);
+            ApiResult<Page<Supplier>> response = ApiResult.success(
+                    suppliersPage,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
+                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
+            );
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResult<Page<Supplier>> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
