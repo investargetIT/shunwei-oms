@@ -187,9 +187,8 @@ public class SupplierController {
     public ResponseEntity<ApiResult<Void>> deleteSuppliers(@RequestBody IdsRequest idsRequest) {
         try {
             List<Long> ids = idsRequest.getIds();
-            System.out.println(idsRequest);
             if (ids == null || ids.isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResult.error(400, "IDs are required", "The provided IDs list is either null or empty."));
+                return ResponseEntity.badRequest().body(ApiResult.error(ApiConstants.CODE_BAD_REQUEST, "IDs are required", "The provided IDs list is either null or empty."));
             }
             supplierService.deleteSuppliers(ids);
             ApiResult<Void> response = ApiResult.success(

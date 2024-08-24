@@ -3,6 +3,9 @@ package com.yeebotech.shunweioms.specification;
 import com.yeebotech.shunweioms.entity.Supplier;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class SupplierSpecification {
 
     public static Specification<Supplier> hasName(String name) {
@@ -70,33 +73,33 @@ public class SupplierSpecification {
                 criteriaBuilder.like(root.get("contractStatus"), "%" + contractStatus + "%");
     }
 
-//    public static Specification<Supplier> hasDealDate(LocalDate dealDate) {
-//        return (root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("dealDate"), dealDate);
-//    }
-//
-//    public static Specification<Supplier> hasStartDate(LocalDate startDate) {
-//        return (root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("startDate"), startDate);
-//    }
+    public static Specification<Supplier> hasDealDate(LocalDate dealDate) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("dealDate"), dealDate);
+    }
 
-//    public static Specification<Supplier> hasEndDate(LocalDate endDate) {
-//        return (root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("endDate"), endDate);
-//    }
-//
-//    public static Specification<Supplier> hasRemark(String remark) {
-//        return (root, query, criteriaBuilder) ->
-//                criteriaBuilder.like(root.get("remark"), "%" + remark + "%");
-//    }
-//
-//    public static Specification<Supplier> hasCreatedAt(LocalDateTime createdAt) {
-//        return (root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("createdAt"), createdAt);
-//    }
-//
-//    public static Specification<Supplier> hasUpdatedAt(LocalDateTime updatedAt) {
-//        return (root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("updatedAt"), updatedAt);
-//    }
+    public static Specification<Supplier> hasStartDate(LocalDate startDate) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("startDate"), startDate);
+    }
+
+    public static Specification<Supplier> hasEndDate(LocalDate endDate) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("endDate"), endDate);
+    }
+
+    public static Specification<Supplier> hasRemark(String remark) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.like(root.get("remark"), "%" + remark + "%");
+    }
+
+    public static Specification<Supplier> hasCreatedAt(LocalDateTime createdAt) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("createdAt"), createdAt);
+    }
+
+    public static Specification<Supplier> hasUpdatedAt(LocalDateTime updatedAt) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("updatedAt"), updatedAt);
+    }
 }

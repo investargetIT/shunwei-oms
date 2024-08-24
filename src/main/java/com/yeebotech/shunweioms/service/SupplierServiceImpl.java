@@ -3,16 +3,17 @@ package com.yeebotech.shunweioms.service;
 import com.yeebotech.shunweioms.entity.Supplier;
 import com.yeebotech.shunweioms.repository.SupplierRepository;
 import com.yeebotech.shunweioms.specification.SupplierSpecification;
+import com.yeebotech.shunweioms.util.DateUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @RequiredArgsConstructor
@@ -102,24 +103,27 @@ public class SupplierServiceImpl implements SupplierService {
         if (searchParams.containsKey("contractStatus")) {
             spec = spec.and(SupplierSpecification.hasContractStatus((String) searchParams.get("contractStatus")));
         }
-//        if (searchParams.containsKey("dealDate")) {
-//            spec = spec.and(SupplierSpecification.hasDealDate((LocalDate) searchParams.get("dealDate")));
-//        }
-//        if (searchParams.containsKey("startDate")) {
-//            spec = spec.and(SupplierSpecification.hasStartDate((LocalDate) searchParams.get("startDate")));
-//        }
-//        if (searchParams.containsKey("endDate")) {
-//            spec = spec.and(SupplierSpecification.hasEndDate((LocalDate) searchParams.get("endDate")));
-//        }
-//        if (searchParams.containsKey("remark")) {
-//            spec = spec.and(SupplierSpecification.hasRemark((String) searchParams.get("remark")));
-//        }
-//        if (searchParams.containsKey("createdAt")) {
-//            spec = spec.and(SupplierSpecification.hasCreatedAt((LocalDateTime) searchParams.get("createdAt")));
-//        }
-//        if (searchParams.containsKey("updatedAt")) {
-//            spec = spec.and(SupplierSpecification.hasUpdatedAt((LocalDateTime) searchParams.get("updatedAt")));
-//        }
+        if (searchParams.containsKey("dealDate")) {
+            spec = spec.and(SupplierSpecification.hasDealDate((LocalDate) searchParams.get("dealDate")));
+        }
+        if (searchParams.containsKey("startDate")) {
+            LocalDate startDate = DateUtils.parseLocalDate((String) searchParams.get("startDate"));
+            spec = spec.and(SupplierSpecification.hasStartDate(startDate));
+        }
+        if (searchParams.containsKey("endDate")) {
+            LocalDate endDate = DateUtils.parseLocalDate((String) searchParams.get("endDate"));
+            spec = spec.and(SupplierSpecification.hasEndDate(endDate));
+        }
+        if (searchParams.containsKey("remark")) {
+            spec = spec.and(SupplierSpecification.hasRemark((String) searchParams.get("remark")));
+        }
+        if (searchParams.containsKey("createdAt")) {
+            LocalDateTime createdAt = DateUtils.parseLocalDateTime((String) searchParams.get("createdAt"));
+            spec = spec.and(SupplierSpecification.hasCreatedAt(createdAt));
+        }
+        if (searchParams.containsKey("updatedAt")) {
+            spec = spec.and(SupplierSpecification.hasUpdatedAt((LocalDateTime) searchParams.get("updatedAt")));
+        }
 
         return supplierRepository.findAll(spec);
     }
