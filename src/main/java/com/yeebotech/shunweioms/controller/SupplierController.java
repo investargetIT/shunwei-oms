@@ -34,29 +34,29 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    @Operation(summary = "Retrieve all suppliers", description = "Fetches a list of all suppliers")
-    @ApiResponse(responseCode = "200", description = "List of suppliers",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Supplier.class)))
-    @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    @GetMapping
-    public ResponseEntity<ApiResult<List<Supplier>>> getAllSuppliers() {
-        try {
-            List<Supplier> suppliers = supplierService.findAllSuppliers();
-            ApiResult<List<Supplier>> response = ApiResult.success(
-                    suppliers,
-                    ApiConstants.CODE_BUSINESS_SUCCESS,
-                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
-            );
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            ApiResult<List<Supplier>> response = ApiResult.error(
-                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
-                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS,
-                    e.getMessage()
-            );
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @Operation(summary = "Retrieve all suppliers", description = "Fetches a list of all suppliers")
+//    @ApiResponse(responseCode = "200", description = "List of suppliers",
+//            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Supplier.class)))
+//    @ApiResponse(responseCode = "500", description = "Internal Server Error")
+//    @GetMapping
+//    public ResponseEntity<ApiResult<List<Supplier>>> getAllSuppliers() {
+//        try {
+//            List<Supplier> suppliers = supplierService.findAllSuppliers();
+//            ApiResult<List<Supplier>> response = ApiResult.success(
+//                    suppliers,
+//                    ApiConstants.CODE_BUSINESS_SUCCESS,
+//                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
+//            );
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//        } catch (Exception e) {
+//            ApiResult<List<Supplier>> response = ApiResult.error(
+//                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+//                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS,
+//                    e.getMessage()
+//            );
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @Operation(summary = "Retrieve a supplier by ID", description = "Fetches a supplier by its ID")
     @ApiResponse(responseCode = "200", description = "Supplier found",
