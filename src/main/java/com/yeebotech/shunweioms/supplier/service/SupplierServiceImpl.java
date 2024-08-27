@@ -1,8 +1,8 @@
-package com.yeebotech.shunweioms.service;
+package com.yeebotech.shunweioms.supplier.service;
 
-import com.yeebotech.shunweioms.entity.Supplier;
-import com.yeebotech.shunweioms.repository.SupplierRepository;
-import com.yeebotech.shunweioms.specification.SupplierSpecification;
+import com.yeebotech.shunweioms.supplier.entity.Supplier;
+import com.yeebotech.shunweioms.supplier.repository.SupplierRepository;
+import com.yeebotech.shunweioms.supplier.specification.SupplierSpecification;
 import com.yeebotech.shunweioms.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,11 +22,6 @@ import java.util.Optional;
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
-
-    @Override
-    public List<Supplier> findAllSuppliers() {
-        return supplierRepository.findAll();
-    }
 
     @Override
     public Optional<Supplier> findSupplierById(Long id) {

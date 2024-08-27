@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.entity;
+package com.yeebotech.shunweioms.supplier.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -75,7 +75,7 @@ public class Supplier {
     private String remark;
 
     @Column(name = "created_at", updatable = false)
-    @Schema(hidden = true) // 隐藏 updatedAt 字段
+    @Schema(hidden = true) // 隐藏 createdAt 字段
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")

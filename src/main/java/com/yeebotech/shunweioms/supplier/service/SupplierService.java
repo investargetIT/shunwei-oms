@@ -1,6 +1,6 @@
-package com.yeebotech.shunweioms.service;
+package com.yeebotech.shunweioms.supplier.service;
 
-import com.yeebotech.shunweioms.entity.Supplier;
+import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface SupplierService {
-    List<Supplier> findAllSuppliers();
     Optional<Supplier> findSupplierById(Long id);
     Supplier saveSupplier(Supplier supplier);
     Optional<Supplier> updateSupplier(Long id, Supplier supplier);

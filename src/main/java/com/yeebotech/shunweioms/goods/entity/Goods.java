@@ -1,6 +1,6 @@
 package com.yeebotech.shunweioms.goods.entity;
 
-import com.yeebotech.shunweioms.entity.Supplier;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -12,6 +12,7 @@ public class Goods {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(hidden = true)
     private Long id;
 
     @Column(name = "internal_code", nullable = false, unique = true)
@@ -47,8 +48,8 @@ public class Goods {
     @Column(name = "gross_margin")
     private float grossMargin;
 
-    @JoinColumn(name = "supplier_id", nullable = false)
-    private Long supplier;
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     @Column(name = "lead_time")
     private String leadTime;
@@ -59,8 +60,10 @@ public class Goods {
     private String remark;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @Schema(hidden = true) // 隐藏 createdAt 字段
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")
+    @Schema(hidden = true) // 隐藏 updatedAt 字段
     private LocalDateTime updatedAt = LocalDateTime.now();
 }

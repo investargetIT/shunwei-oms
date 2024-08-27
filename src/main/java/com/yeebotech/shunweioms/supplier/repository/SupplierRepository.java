@@ -1,6 +1,6 @@
-package com.yeebotech.shunweioms.repository;
+package com.yeebotech.shunweioms.supplier.repository;
 
-import com.yeebotech.shunweioms.entity.Supplier;
+import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

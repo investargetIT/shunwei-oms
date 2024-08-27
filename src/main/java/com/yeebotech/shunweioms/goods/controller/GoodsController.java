@@ -1,51 +1,159 @@
 package com.yeebotech.shunweioms.goods.controller;
 
+import com.yeebotech.shunweioms.constants.ApiConstants;
+import com.yeebotech.shunweioms.dto.ApiResult;
+import com.yeebotech.shunweioms.dto.IdsRequest;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.service.GoodsService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/goods")
+@RequestMapping("/goods")
 public class GoodsController {
 
     @Autowired
     private GoodsService goodsService;
 
-    @Operation(summary = "Get all goods")
-    @GetMapping
-    public ResponseEntity<List<Goods>> getAllGoods() {
-        return ResponseEntity.ok(goodsService.getAllGoods());
+    @Operation(summary = "Search for goods")
+    @GetMapping("/search")
+    public ResponseEntity<ApiResult<Page<Goods>>> searchGoods(@RequestParam Map<String, Object> searchParams,
+                                                              @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        try {
+            Page<Goods> goodsPage = goodsService.searchGoods(searchParams, pageable);
+            ApiResult<Page<Goods>> response = ApiResult.success(
+                    goodsPage,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
+                    ApiConstants.MESSAGE_SUCCESS_GOODS_RETRIEVED
+            );
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResult<Page<Goods>> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_GOODS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Get a specific good by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Goods> getGoodsById(@PathVariable Long id) {
-        return ResponseEntity.ok(goodsService.getGoodsById(id));
+    public ResponseEntity<ApiResult<Goods>> getGoodsById(@PathVariable Long id) {
+        try {
+            Optional<Goods> goods = goodsService.getGoodsById(id);
+            if (goods.isPresent()) {
+                ApiResult<Goods> response = ApiResult.success(
+                        goods.get(),
+                        ApiConstants.CODE_BUSINESS_SUCCESS,
+                        ApiConstants.MESSAGE_SUCCESS_GOODS_RETRIEVED
+                );
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                ApiResult<Goods> response = ApiResult.error(
+                        ApiConstants.CODE_NOT_FOUND,
+                        ApiConstants.MESSAGE_NO_GOODS_WITH_ID,
+                        null
+                );
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResult<Goods> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_GOODS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Create a new good")
     @PostMapping
-    public ResponseEntity<Goods> createGoods(@RequestBody Goods goods) {
-        return ResponseEntity.ok(goodsService.createGoods(goods));
+    public ResponseEntity<ApiResult<Goods>> createGoods(@RequestBody Goods goods) {
+
+
+        try {
+            Goods createdGoods = goodsService.createGoods(goods);
+            ApiResult<Goods> response = ApiResult.success(
+                    createdGoods,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
+                    ApiConstants.MESSAGE_SUCCESS_GOODS_CREATED
+            );
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ApiResult<Goods> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_CREATE_GOODS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Update a good")
     @PutMapping("/{id}")
-    public ResponseEntity<Goods> updateGoods(@PathVariable Long id, @RequestBody Goods goods) {
-        return ResponseEntity.ok(goodsService.updateGoods(id, goods));
+    public ResponseEntity<ApiResult<Goods>> updateGoods(@PathVariable Long id, @RequestBody Goods goods) {
+        try {
+            Optional<Goods> updatedGoods = goodsService.updateGoods(id, goods);
+            if (updatedGoods.isPresent()) {
+                ApiResult<Goods> response = ApiResult.success(
+                        updatedGoods.get(),
+                        ApiConstants.CODE_BUSINESS_SUCCESS,
+                        ApiConstants.MESSAGE_SUCCESS_GOODS_UPDATED
+                );
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                ApiResult<Goods> response = ApiResult.error(
+                        ApiConstants.CODE_NOT_FOUND,
+                        ApiConstants.MESSAGE_NO_GOODS_WITH_ID,
+                        null
+                );
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResult<Goods> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_UPDATE_GOODS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @Operation(summary = "Delete a good")
-    @ApiResponse(responseCode = "204", description = "Goods deleted")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGoods(@PathVariable Long id) {
-        goodsService.deleteGoods(id);
-        return ResponseEntity.noContent().build();
+    @Operation(summary = "Delete multiple goods", description = "Removes multiple goods from the system")
+    @DeleteMapping("/batch")
+    public ResponseEntity<ApiResult<Void>> deleteGoods(@RequestBody IdsRequest idsRequest) {
+        try {
+            List<Long> ids = idsRequest.getIds();
+            if (ids == null || ids.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResult.error(ApiConstants.CODE_BAD_REQUEST, "IDs are required", "The provided IDs list is either null or empty."));
+            }
+            goodsService.deleteGoods(ids);
+            ApiResult<Void> response = ApiResult.success(
+                    null,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
+                    ApiConstants.MESSAGE_SUCCESS_GOODS_DELETED
+            );
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            ApiResult<Void> response = ApiResult.error(
+                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+                    ApiConstants.MESSAGE_FAILED_TO_DELETE_GOODS,
+                    e.getMessage()
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

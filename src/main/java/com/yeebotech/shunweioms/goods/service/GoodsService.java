@@ -1,18 +1,23 @@
 package com.yeebotech.shunweioms.goods.service;
 
 import com.yeebotech.shunweioms.goods.entity.Goods;
+import com.yeebotech.shunweioms.supplier.entity.Supplier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface GoodsService {
 
-    List<Goods> getAllGoods();
+    Page<Goods> searchGoods(Map<String, Object> searchParams, Pageable pageable);
 
-    Goods getGoodsById(Long id);
+    Optional<Goods> getGoodsById(Long id);
 
     Goods createGoods(Goods goods);
 
-    Goods updateGoods(Long id, Goods goods);
+    Optional<Goods> updateGoods(Long id, Goods goods);
 
-    void deleteGoods(Long id);
+    void deleteGoods(List<Long> ids);
 }

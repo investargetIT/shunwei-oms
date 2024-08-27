@@ -1,6 +1,6 @@
-package com.yeebotech.shunweioms.specification;
+package com.yeebotech.shunweioms.supplier.specification;
 
-import com.yeebotech.shunweioms.entity.Supplier;
+import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;

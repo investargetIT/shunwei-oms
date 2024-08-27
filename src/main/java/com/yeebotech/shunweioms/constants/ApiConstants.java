@@ -10,6 +10,10 @@ public class ApiConstants {
     public static final String MESSAGE_SUCCESS_SUPPLIER_DELETED = "Supplier deleted successfully.";
     public static final String MESSAGE_SUCCESS_SUPPLIERS_DELETED = "Suppliers deleted successfully"; // 新增的成功消息
 
+    public static final String MESSAGE_SUCCESS_GOODS_RETRIEVED = "Successfully retrieved all goods.";
+    public static final String MESSAGE_SUCCESS_GOODS_CREATED = "Goods created successfully.";
+    public static final String MESSAGE_SUCCESS_GOODS_UPDATED = "Goods updated successfully.";
+    public static final String MESSAGE_SUCCESS_GOODS_DELETED = "Goods deleted successfully"; // 新增的成功消息
     // Error Messages
     public static final String MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS = "Failed to retrieve suppliers.";
     public static final String MESSAGE_FAILED_TO_RETRIEVE_SUPPLIER = "Failed to retrieve the supplier.";
@@ -21,6 +25,11 @@ public class ApiConstants {
     public static final String MESSAGE_ERROR_INTERNAL_SERVER = "Internal server error.";
     public static final String MESSAGE_FAILED_TO_DELETE_SUPPLIERS = "Failed to delete suppliers"; // 新增的失败消息
 
+    public static final String MESSAGE_FAILED_TO_RETRIEVE_GOODS = "Failed to retrieve goods.";
+    public static final String MESSAGE_NO_GOODS_WITH_ID = "No goods found with the given ID.";
+    public static final String MESSAGE_FAILED_TO_CREATE_GOODS = "Failed to create the goods.";
+    public static final String MESSAGE_FAILED_TO_UPDATE_GOODS = "Failed to update the goods.";
+    public static final String MESSAGE_FAILED_TO_DELETE_GOODS = "Failed to delete the goods.";
     // HTTP Status Codes
     public static final int CODE_SUCCESS = 200;
     public static final int CODE_CREATED = 201;
