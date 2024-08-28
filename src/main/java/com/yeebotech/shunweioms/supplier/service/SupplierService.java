@@ -18,5 +18,5 @@ public interface SupplierService {
     void deleteSuppliers(List<Long> ids);
 
     Page<Supplier> searchSuppliers(Map<String, Object> searchParams, Pageable pageable);
-
+    List<Supplier> findAllSuppliers();
 }

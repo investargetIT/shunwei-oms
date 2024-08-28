@@ -124,4 +124,9 @@ public class SupplierServiceImpl implements SupplierService {
 
         return supplierRepository.findAll(spec, pageable);
     }
+
+    @Override
+    public List<Supplier> findAllSuppliers() {
+        return supplierRepository.findAll();
+    }
 }

@@ -2,6 +2,10 @@ package com.yeebotech.shunweioms.goods.service;
 
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.repository.GoodsRepository;
+import com.yeebotech.shunweioms.goods.service.specifications.GoodsSpecifications;
+import com.yeebotech.shunweioms.supplier.dto.SupplierDTO;
+import com.yeebotech.shunweioms.supplier.entity.Supplier;
+import com.yeebotech.shunweioms.supplier.repository.SupplierRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -12,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,41 +28,14 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private GoodsRepository goodsRepository;
+    @Autowired
+    private SupplierRepository supplierRepository;
 
     @Override
-    public Page<Goods> searchGoods(Map<String, Object> searchParams, Pageable pageable) {
-        Specification<Goods> specification = (Root<Goods> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (searchParams != null && !searchParams.isEmpty()) {
-                searchParams.forEach((key, value) -> {
-                    if (value != null && StringUtils.hasText(value.toString())) {
-                        switch (key) {
-                            case "internalCode":
-                                predicates.add(criteriaBuilder.equal(root.get("internalCode"), value));
-                                break;
-                            case "externalCode":
-                                predicates.add(criteriaBuilder.equal(root.get("externalCode"), value));
-                                break;
-                            case "name":
-                                predicates.add(criteriaBuilder.like(root.get("name"), "%" + value + "%"));
-                                break;
-                            case "category":
-                                predicates.add(criteriaBuilder.equal(root.get("category"), value));
-                                break;
-                            case "brand":
-                                predicates.add(criteriaBuilder.equal(root.get("brand"), value));
-                                break;
-                            // Add more cases for other fields if needed
-                        }
-                    }
-                });
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return goodsRepository.findAll(specification, pageable);
+    public Page<GoodsDTO> searchGoods(Map<String, Object> searchParams, Pageable pageable) {
+        Specification<Goods> specification = GoodsSpecifications.bySearchParams(searchParams);
+        return goodsRepository.findAll(specification, pageable)
+                .map(this::convertToDTO);
     }
 
     @Override
@@ -83,4 +61,39 @@ public class GoodsServiceImpl implements GoodsService {
     public void deleteGoods(List<Long> ids) {
         goodsRepository.deleteByIds(ids);
     }
+
+    private GoodsDTO convertToDTO(Goods goods) {
+        GoodsDTO dto = new GoodsDTO();
+        dto.setId(goods.getId());
+        dto.setInternalCode(goods.getInternalCode());
+        dto.setExternalCode(goods.getExternalCode());
+        dto.setName(goods.getName());
+        dto.setCategory(goods.getCategory());
+        dto.setPicture(goods.getPicture());
+        dto.setBrand(goods.getBrand());
+        dto.setDetails(goods.getDetails());
+        dto.setUsageLocation(goods.getUsageLocation());
+        dto.setUnit(goods.getUnit());
+        dto.setBoxStandards(goods.getBoxStandards());
+        dto.setCostPrice(goods.getCostPrice());
+        dto.setSellingPrice(goods.getSellingPrice());
+        dto.setGrossMargin(goods.getGrossMargin());
+        dto.setLeadTime(goods.getLeadTime());
+        dto.setMoq(goods.getMoq());
+        dto.setRemark(goods.getRemark());
+        dto.setCreatedAt(goods.getCreatedAt());
+        dto.setUpdatedAt(goods.getUpdatedAt());
+
+        // 通过 supplierId 获取 Supplier 实体并转换为 DTO
+        Optional<Supplier> supplierOpt = supplierRepository.findById(goods.getSupplierId());
+        supplierOpt.ifPresent(supplier -> {
+            SupplierDTO supplierDTO = new SupplierDTO();
+            supplierDTO.setId(supplier.getId());
+            supplierDTO.setName(supplier.getName());
+            dto.setSupplier(supplierDTO); // 将 SupplierDTO 赋值给 GoodsDTO
+        });
+
+        return dto;
+    }
+
 }

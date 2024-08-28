@@ -188,5 +188,26 @@ public class SupplierController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+//    @Operation(summary = "Retrieve all suppliers", description = "Fetches a list of all suppliers")
+//    @GetMapping
+//    public ResponseEntity<ApiResult<List<Supplier>>> getAllSuppliers() {
+//        try {
+//            List<Supplier> suppliers = supplierService.findAllSuppliers();
+//            ApiResult<List<Supplier>> response = ApiResult.success(
+//                    suppliers,
+//                    ApiConstants.CODE_BUSINESS_SUCCESS,
+//                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
+//            );
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//        } catch (Exception e) {
+//            ApiResult<List<Supplier>> response = ApiResult.error(
+//                    ApiConstants.CODE_INTERNAL_SERVER_ERROR,
+//                    ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS,
+//                    e.getMessage()
+//            );
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }
 

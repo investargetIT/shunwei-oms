@@ -3,6 +3,7 @@ package com.yeebotech.shunweioms.goods.controller;
 import com.yeebotech.shunweioms.constants.ApiConstants;
 import com.yeebotech.shunweioms.dto.ApiResult;
 import com.yeebotech.shunweioms.dto.IdsRequest;
+import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.service.GoodsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,20 +28,20 @@ public class GoodsController {
 
     @Operation(summary = "Search for goods")
     @GetMapping("/search")
-    public ResponseEntity<ApiResult<Page<Goods>>> searchGoods(@RequestParam Map<String, Object> searchParams,
+    public ResponseEntity<ApiResult<Page<GoodsDTO>>> searchGoods(@RequestParam Map<String, Object> searchParams,
                                                               @RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         try {
-            Page<Goods> goodsPage = goodsService.searchGoods(searchParams, pageable);
-            ApiResult<Page<Goods>> response = ApiResult.success(
+            Page<GoodsDTO> goodsPage = goodsService.searchGoods(searchParams, pageable);
+            ApiResult<Page<GoodsDTO>> response = ApiResult.success(
                     goodsPage,
                     ApiConstants.CODE_BUSINESS_SUCCESS,
                     ApiConstants.MESSAGE_SUCCESS_GOODS_RETRIEVED
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            ApiResult<Page<Goods>> response = ApiResult.error(
+            ApiResult<Page<GoodsDTO>> response = ApiResult.error(
                     ApiConstants.CODE_INTERNAL_SERVER_ERROR,
                     ApiConstants.MESSAGE_FAILED_TO_RETRIEVE_GOODS,
                     e.getMessage()
@@ -49,7 +50,7 @@ public class GoodsController {
         }
     }
 
-    @Operation(summary = "Get a specific good by ID")
+    @Operation(summary = "Get a specific goods by ID")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResult<Goods>> getGoodsById(@PathVariable Long id) {
         try {
@@ -79,7 +80,7 @@ public class GoodsController {
         }
     }
 
-    @Operation(summary = "Create a new good")
+    @Operation(summary = "Create a new goods")
     @PostMapping
     public ResponseEntity<ApiResult<Goods>> createGoods(@RequestBody Goods goods) {
 
@@ -102,7 +103,7 @@ public class GoodsController {
         }
     }
 
-    @Operation(summary = "Update a good")
+    @Operation(summary = "Update a goods")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResult<Goods>> updateGoods(@PathVariable Long id, @RequestBody Goods goods) {
         try {

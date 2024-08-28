@@ -1,5 +1,6 @@
 package com.yeebotech.shunweioms.goods.service;
 
+import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public interface GoodsService {
 
-    Page<Goods> searchGoods(Map<String, Object> searchParams, Pageable pageable);
+    Page<GoodsDTO> searchGoods(Map<String, Object> searchParams, Pageable pageable);
 
     Optional<Goods> getGoodsById(Long id);
 
