@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.config;
+package com.yeebotech.shunweioms.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

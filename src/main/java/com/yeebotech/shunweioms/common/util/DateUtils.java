@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.util;
+package com.yeebotech.shunweioms.common.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.exception;
+package com.yeebotech.shunweioms.common.exception;
 
 public class BusinessException extends RuntimeException {
     private final int code;        // 自定义业务码

@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.dto;
+package com.yeebotech.shunweioms.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

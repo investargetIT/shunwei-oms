@@ -1,8 +1,8 @@
 package com.yeebotech.shunweioms.goods.controller;
 
-import com.yeebotech.shunweioms.constants.ApiConstants;
-import com.yeebotech.shunweioms.dto.ApiResult;
-import com.yeebotech.shunweioms.dto.IdsRequest;
+import com.yeebotech.shunweioms.common.constants.ApiConstants;
+import com.yeebotech.shunweioms.common.dto.ApiResult;
+import com.yeebotech.shunweioms.common.dto.IdsRequest;
 import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.service.GoodsService;

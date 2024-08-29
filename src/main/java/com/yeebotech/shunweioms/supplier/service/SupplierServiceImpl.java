@@ -2,8 +2,8 @@ package com.yeebotech.shunweioms.supplier.service;
 
 import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import com.yeebotech.shunweioms.supplier.repository.SupplierRepository;
-import com.yeebotech.shunweioms.supplier.specification.SupplierSpecification;
-import com.yeebotech.shunweioms.util.DateUtils;
+import com.yeebotech.shunweioms.supplier.service.specification.SupplierSpecification;
+import com.yeebotech.shunweioms.common.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

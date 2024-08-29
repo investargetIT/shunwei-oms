@@ -1,11 +1,11 @@
 package com.yeebotech.shunweioms.supplier.controller;
 
-import com.yeebotech.shunweioms.constants.ApiConstants;
-import com.yeebotech.shunweioms.dto.ApiResult;
-import com.yeebotech.shunweioms.dto.IdsRequest;
+import com.yeebotech.shunweioms.common.constants.ApiConstants;
+import com.yeebotech.shunweioms.common.dto.ApiResult;
+import com.yeebotech.shunweioms.common.dto.IdsRequest;
 import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import com.yeebotech.shunweioms.supplier.service.SupplierService;
-import com.yeebotech.shunweioms.exception.BusinessException;
+import com.yeebotech.shunweioms.common.exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

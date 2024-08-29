@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.supplier.specification;
+package com.yeebotech.shunweioms.supplier.service.specification;
 
 import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import org.springframework.data.jpa.domain.Specification;

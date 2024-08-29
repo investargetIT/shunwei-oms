@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.constants;
+package com.yeebotech.shunweioms.common.constants;
 
 public class ApiConstants {
 
