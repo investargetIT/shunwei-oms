@@ -8,6 +8,7 @@ import com.yeebotech.shunweioms.supplier.service.SupplierService;
 import com.yeebotech.shunweioms.common.controller.BaseController;
 import com.yeebotech.shunweioms.common.exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/suppliers")
+@Tag(name = "供应商管理", description = "Supplier Controller")
 public class SupplierController extends BaseController {
 
     private final SupplierService supplierService;

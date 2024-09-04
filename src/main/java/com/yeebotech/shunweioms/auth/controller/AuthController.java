@@ -9,12 +9,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import com.yeebotech.shunweioms.auth.dto.CurrentUserResponse;
 import com.yeebotech.shunweioms.auth.dto.LoginRequest;
 import com.yeebotech.shunweioms.auth.dto.LoginResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "用户认证",description = "Auth Controller")
 public class AuthController {
 
     @Operation(summary = "User login",

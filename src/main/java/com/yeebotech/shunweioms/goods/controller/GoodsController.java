@@ -8,6 +8,7 @@ import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.service.GoodsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/goods")
+@Tag(name = "商品管理", description = "Goods Controller")
 public class GoodsController extends BaseController {
 
     private final GoodsService goodsService;
