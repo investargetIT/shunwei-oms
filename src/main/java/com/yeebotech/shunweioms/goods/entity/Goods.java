@@ -66,4 +66,9 @@ public class Goods {
     @Column(name = "updated_at")
     @Schema(hidden = true) // 隐藏 updatedAt 字段
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

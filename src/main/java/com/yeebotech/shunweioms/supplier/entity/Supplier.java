@@ -76,16 +76,11 @@ public class Supplier {
 
     @Column(name = "created_at", updatable = false)
     @Schema(hidden = true) // 隐藏 createdAt 字段
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")
     @Schema(hidden = true) // 隐藏 updatedAt 字段
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
     protected void onUpdate() {

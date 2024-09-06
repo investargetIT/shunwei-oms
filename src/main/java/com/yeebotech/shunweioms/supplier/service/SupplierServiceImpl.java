@@ -6,7 +6,9 @@ import com.yeebotech.shunweioms.supplier.service.specification.SupplierSpecifica
 import com.yeebotech.shunweioms.common.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -122,7 +124,13 @@ public class SupplierServiceImpl implements SupplierService {
             spec = spec.and(SupplierSpecification.hasUpdatedAt((LocalDateTime) searchParams.get("updatedAt")));
         }
 
-        return supplierRepository.findAll(spec, pageable);
+        // 创建新的 Pageable，按 updatedAt 倒序排序
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "updatedAt") // 按更新时间倒序
+        );
+        return supplierRepository.findAll(spec, sortedPageable);
     }
 
     @Override

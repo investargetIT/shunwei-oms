@@ -12,7 +12,9 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -34,7 +36,15 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public Page<GoodsDTO> searchGoods(Map<String, Object> searchParams, Pageable pageable) {
         Specification<Goods> specification = GoodsSpecifications.bySearchParams(searchParams);
-        return goodsRepository.findAll(specification, pageable)
+
+        // 创建新的 Pageable，按 updatedAt 倒序排序
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "updatedAt") // 按更新时间倒序
+        );
+
+        return goodsRepository.findAll(specification, sortedPageable)
                 .map(this::convertToDTO);
     }
 
@@ -84,16 +94,23 @@ public class GoodsServiceImpl implements GoodsService {
         dto.setCreatedAt(goods.getCreatedAt());
         dto.setUpdatedAt(goods.getUpdatedAt());
 
-        // 通过 supplierId 获取 Supplier 实体并转换为 DTO
-        Optional<Supplier> supplierOpt = supplierRepository.findById(goods.getSupplierId());
-        supplierOpt.ifPresent(supplier -> {
-            SupplierDTO supplierDTO = new SupplierDTO();
-            supplierDTO.setId(supplier.getId());
-            supplierDTO.setName(supplier.getName());
-            dto.setSupplier(supplierDTO); // 将 SupplierDTO 赋值给 GoodsDTO
-        });
+        // 先判断是否有 supplierId
+        if (goods.getSupplierId() != null && goods.getSupplierId() > 0) {
+            // 如果有 supplierId，再去获取 Supplier 实体并转换为 DTO
+            Optional<Supplier> supplierOpt = supplierRepository.findById(goods.getSupplierId());
+            supplierOpt.ifPresent(supplier -> {
+                SupplierDTO supplierDTO = new SupplierDTO();
+                supplierDTO.setId(supplier.getId());
+                supplierDTO.setName(supplier.getName());
+                dto.setSupplier(supplierDTO); // 将 SupplierDTO 赋值给 GoodsDTO
+            });
+        } else {
+            // 如果没有 supplierId，返回空的 SupplierDTO
+            dto.setSupplier(null); // 或者返回一个新的空 SupplierDTO，例如 new SupplierDTO()
+        }
 
         return dto;
     }
+
 
 }
