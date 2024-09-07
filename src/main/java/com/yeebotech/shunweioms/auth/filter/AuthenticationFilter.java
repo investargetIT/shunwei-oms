@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
@@ -27,6 +28,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        // 处理预检请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        // 打印请求头部信息
+        logger.info("Request headers 1: {}", Collections.list(request.getHeaderNames()));
+
         String requestPath = request.getServletPath();
         // 放行 Swagger 和登录路径
         if (requestPath.startsWith("/swagger-ui/") || requestPath.startsWith("/v3/api-docs")
@@ -40,13 +52,20 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         if (token == null || !validateToken(token)) {
             logger.warn("Invalid or missing token for request path: {}", request.getServletPath());
+            // 设置 CORS 头部
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 设置403状态码
             return;
         }
 
         // 如果 token 有效，继续处理请求
         filterChain.doFilter(request, response);
-        logger.info("Authorization header: {}", token);
+        logger.info("Authorization header token: {}", token);
+
+        // 打印响应头部信息
+        logger.info("Response headers 2: {}", response.getHeaderNames());
     }
 
     private boolean validateToken(String token) {
