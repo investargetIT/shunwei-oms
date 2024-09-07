@@ -10,9 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -28,8 +25,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())  // 禁用 CSRF 保护
-                .cors(withDefaults())  // 启用 CORS 支持
-                .addFilterBefore(authenticationFilter, SecurityContextPersistenceFilter.class); // 添加自定义过滤器
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // 启用 CORS 支持
+                .addFilterBefore(authenticationFilter, SecurityContextPersistenceFilter.class);  // 添加自定义过滤器
         return http.build();
     }
 

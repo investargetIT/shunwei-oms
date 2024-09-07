@@ -1,7 +1,6 @@
 package com.yeebotech.shunweioms.auth.filter;
 
 import com.yeebotech.shunweioms.auth.dto.UserCheckResponse;
-import com.yeebotech.shunweioms.auth.exception.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
