@@ -27,7 +27,8 @@ public class Supplier {
     private String code;
 
     @Column(name = "name", nullable = false)
-    private String name;
+    @Builder.Default
+    private String name = "defaultName";  // 默认值示例
 
     @Column(name = "bank_account")
     private String bankAccount;
@@ -76,10 +77,12 @@ public class Supplier {
 
     @Column(name = "created_at", updatable = false)
     @Schema(hidden = true) // 隐藏 createdAt 字段
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")
     @Schema(hidden = true) // 隐藏 updatedAt 字段
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @PreUpdate
