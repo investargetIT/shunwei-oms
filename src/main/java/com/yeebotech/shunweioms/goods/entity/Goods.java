@@ -51,6 +51,10 @@ public class Goods {
     @Column(name = "supplier_id")
     private Long supplierId;
 
+
+    @Column(name = "goods_category_id")
+    private Long goodsCategoryId;
+
     @Column(name = "lead_time")
     private String leadTime;
 

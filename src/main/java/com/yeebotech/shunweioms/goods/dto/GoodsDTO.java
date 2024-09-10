@@ -1,5 +1,6 @@
 package com.yeebotech.shunweioms.goods.dto;
 
+import com.yeebotech.shunweioms.goods.category.dto.GoodsCategoryDTO;
 import com.yeebotech.shunweioms.supplier.dto.SupplierDTO;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class GoodsDTO {
     private float sellingPrice;
     private float grossMargin;
     private SupplierDTO supplier; // 包含 SupplierDTO
+    private GoodsCategoryDTO goodsCategory; // 包含 SupplierDTO
     private String leadTime;
     private int moq;
     private String remark;

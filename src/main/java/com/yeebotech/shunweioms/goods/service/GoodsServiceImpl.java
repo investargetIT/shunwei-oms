@@ -1,9 +1,12 @@
 package com.yeebotech.shunweioms.goods.service;
 
+import com.yeebotech.shunweioms.goods.category.entity.GoodsCategory;
+import com.yeebotech.shunweioms.goods.category.repository.GoodsCategoryRepository;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.repository.GoodsRepository;
 import com.yeebotech.shunweioms.goods.service.specifications.GoodsSpecifications;
 import com.yeebotech.shunweioms.supplier.dto.SupplierDTO;
+import com.yeebotech.shunweioms.goods.category.dto.GoodsCategoryDTO;
 import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import com.yeebotech.shunweioms.supplier.repository.SupplierRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -32,6 +35,9 @@ public class GoodsServiceImpl implements GoodsService {
     private GoodsRepository goodsRepository;
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @Autowired
+    private GoodsCategoryRepository goodsCategoryRepository;
 
     @Override
     public Page<GoodsDTO> searchGoods(Map<String, Object> searchParams, Pageable pageable) {
@@ -107,6 +113,27 @@ public class GoodsServiceImpl implements GoodsService {
         } else {
             // 如果没有 supplierId，返回空的 SupplierDTO
             dto.setSupplier(null); // 或者返回一个新的空 SupplierDTO，例如 new SupplierDTO()
+        }
+
+        // 先判断是否有 goodsCategoryId
+        if (goods.getGoodsCategoryId() != null && goods.getGoodsCategoryId() > 0) {
+            // 如果有 goodsCategoryId，再去获取 goodsCategory 实体并转换为 DTO
+            Optional<GoodsCategory> goodsCategoryOpt = goodsCategoryRepository.findById(goods.getGoodsCategoryId());
+            goodsCategoryOpt.ifPresent(goodsCategory -> {
+                GoodsCategoryDTO goodsCategoryDTO = new GoodsCategoryDTO();
+                goodsCategoryDTO.setId(goodsCategory.getId());
+                goodsCategoryDTO.setParentCategory(goodsCategory.getParentCategory());  // 设置父类
+                goodsCategoryDTO.setCategory(goodsCategory.getCategory());  // 设置中类
+                goodsCategoryDTO.setSubCategory(goodsCategory.getSubCategory());  // 设置小类
+                goodsCategoryDTO.setName(goodsCategory.getName());  // 设置名称
+                goodsCategoryDTO.setAttributes(goodsCategory.getAttributes());  // 设置属性
+                goodsCategoryDTO.setOthers(goodsCategory.getOthers());  // 设置其他
+                goodsCategoryDTO.setRemark(goodsCategory.getRemark());  // 设置备注
+                dto.setGoodsCategory(goodsCategoryDTO);
+            });
+        } else {
+            // 如果没有 supplierId，返回空的 SupplierDTO
+            dto.setGoodsCategory(null); // 或者返回一个新的空 SupplierDTO，例如 new SupplierDTO()
         }
 
         return dto;

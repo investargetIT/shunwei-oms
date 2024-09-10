@@ -61,6 +61,9 @@ public class GoodsSpecifications {
                             case "grossMargin":
                                 predicates.add(criteriaBuilder.equal(root.get("grossMargin"), value));
                                 break;
+                            case "goodsCategoryId":
+                                predicates.add(criteriaBuilder.equal(root.get("goodsCategoryId"), value));
+                                break;
                             case "supplierId":
                                 predicates.add(criteriaBuilder.equal(root.get("supplierId"), value));
                                 break;
