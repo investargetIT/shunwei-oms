@@ -39,3 +39,6 @@ src/main/resources/application.yml
 # 如果有不同环境的配置文件，也可以忽略它们
 src/main/resources/application-*.properties
 src/main/resources/application-*.yml
+
+**/.DS_Store
+
