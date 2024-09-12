@@ -22,6 +22,14 @@ public class ApiConstants {
     public static final String MESSAGE_SUCCESS_CATEGORY_RETRIEVED = "Successfully retrieved category.";
     public static final String MESSAGE_SUCCESS_CATEGORIES_RETRIEVED = "Successfully retrieved all categories.";
 
+    // 新增 Customer 的成功消息
+    public static final String MESSAGE_SUCCESS_CUSTOMER_CREATED = "Customer created successfully.";
+    public static final String MESSAGE_SUCCESS_CUSTOMER_UPDATED = "Customer updated successfully.";
+    public static final String MESSAGE_SUCCESS_CUSTOMER_DELETED = "Customer deleted successfully.";
+    public static final String MESSAGE_SUCCESS_CUSTOMER_RETRIEVED = "Successfully retrieved customer.";
+    public static final String MESSAGE_SUCCESS_CUSTOMERS_RETRIEVED = "Successfully retrieved all customers.";
+
+
     // Error Messages
     public static final String MESSAGE_FAILED_TO_RETRIEVE_SUPPLIERS = "Failed to retrieve suppliers.";
     public static final String MESSAGE_FAILED_TO_RETRIEVE_SUPPLIER = "Failed to retrieve the supplier.";

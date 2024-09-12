@@ -16,8 +16,6 @@ public interface GoodsCategoryService {
 
     GoodsCategoryDTO getCategoryById(Long id);
 
-    List<GoodsCategoryDTO> getAllCategories();
-
     // 修改 Map 类型为 String 类型，以匹配实现类中的参数
     Page<GoodsCategoryDTO> searchCategories(Map<String, String> searchParams, Pageable pageable);
 }

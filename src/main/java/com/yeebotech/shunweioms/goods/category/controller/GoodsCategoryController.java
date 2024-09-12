@@ -21,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/goods/categories")
-@Tag(name = "Goods Category", description = "Endpoints for managing goods categories")
+@Tag(name = "商品品类管理", description = "Endpoints for managing goods categories")
 public class GoodsCategoryController extends BaseController {
 
     private final GoodsCategoryService goodsCategoryService;

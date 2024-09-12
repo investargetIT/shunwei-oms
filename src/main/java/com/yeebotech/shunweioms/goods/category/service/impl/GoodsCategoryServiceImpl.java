@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GoodsCategoryServiceImpl implements GoodsCategoryService {
@@ -66,13 +65,6 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         } else {
             throw new RuntimeException("Category not found with id: " + id);
         }
-    }
-
-    @Override
-    public List<GoodsCategoryDTO> getAllCategories() {
-        return goodsCategoryRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
     }
 
     @Override
