@@ -21,4 +21,6 @@ public interface GoodsService {
     Optional<Goods> updateGoods(Long id, Goods goods);
 
     void deleteGoods(List<Long> ids);
+    // New method for converting Goods to GoodsDTO
+    GoodsDTO goodsToDTO(Goods goods);
 }

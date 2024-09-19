@@ -1,16 +1,16 @@
 package com.yeebotech.shunweioms.order.dto;
 
+import com.yeebotech.shunweioms.customer.dto.CustomerDTO;
+import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-
 @Data
-public class OrderDTO {
-
+public class OrderResponseDTO {
     private Long id;
     private String code;
     private String type;
-    private Long goodsId;
+    private GoodsDTO goods;
     private String deliveryNo;
     private String deliveryNoRow;
     private String invoiceName;
@@ -30,7 +30,7 @@ public class OrderDTO {
     private String reviewStatus;
     private LocalDateTime reviewTime;
     private LocalDateTime returnReceiveTime;
-    private Long customerId;
+    private CustomerDTO customer;
     private LocalDateTime createTime;
     private LocalDateTime takeTime;
     private LocalDateTime deliveryTime;

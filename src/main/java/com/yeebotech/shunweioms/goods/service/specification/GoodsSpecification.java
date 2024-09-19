@@ -1,4 +1,4 @@
-package com.yeebotech.shunweioms.goods.service.specifications;
+package com.yeebotech.shunweioms.goods.service.specification;
 
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GoodsSpecifications {
+public class GoodsSpecification {
 
     public static Specification<Goods> bySearchParams(Map<String, Object> searchParams) {
         return (Root<Goods> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {

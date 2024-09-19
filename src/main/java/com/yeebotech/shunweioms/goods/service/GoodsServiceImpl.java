@@ -4,15 +4,11 @@ import com.yeebotech.shunweioms.goods.category.entity.GoodsCategory;
 import com.yeebotech.shunweioms.goods.category.repository.GoodsCategoryRepository;
 import com.yeebotech.shunweioms.goods.entity.Goods;
 import com.yeebotech.shunweioms.goods.repository.GoodsRepository;
-import com.yeebotech.shunweioms.goods.service.specifications.GoodsSpecifications;
+import com.yeebotech.shunweioms.goods.service.specification.GoodsSpecification;
 import com.yeebotech.shunweioms.supplier.dto.SupplierDTO;
 import com.yeebotech.shunweioms.goods.category.dto.GoodsCategoryDTO;
 import com.yeebotech.shunweioms.supplier.entity.Supplier;
 import com.yeebotech.shunweioms.supplier.repository.SupplierRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,10 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import com.yeebotech.shunweioms.goods.dto.GoodsDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,7 +35,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Page<GoodsDTO> searchGoods(Map<String, Object> searchParams, Pageable pageable) {
-        Specification<Goods> specification = GoodsSpecifications.bySearchParams(searchParams);
+        Specification<Goods> specification = GoodsSpecification.bySearchParams(searchParams);
 
         // 创建新的 Pageable，按 updatedAt 倒序排序
         Pageable sortedPageable = PageRequest.of(
@@ -51,7 +45,7 @@ public class GoodsServiceImpl implements GoodsService {
         );
 
         return goodsRepository.findAll(specification, sortedPageable)
-                .map(this::convertToDTO);
+                .map(this::goodsToDTO);
     }
 
     @Override
@@ -78,7 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.deleteByIds(ids);
     }
 
-    private GoodsDTO convertToDTO(Goods goods) {
+    public GoodsDTO goodsToDTO(Goods goods) {
         GoodsDTO dto = new GoodsDTO();
         dto.setId(goods.getId());
         dto.setInternalCode(goods.getInternalCode());

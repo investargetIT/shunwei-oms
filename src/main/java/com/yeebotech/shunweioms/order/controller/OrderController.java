@@ -3,12 +3,17 @@ package com.yeebotech.shunweioms.order.controller;
 import com.yeebotech.shunweioms.common.constants.ApiConstants;
 import com.yeebotech.shunweioms.common.controller.BaseController;
 import com.yeebotech.shunweioms.common.dto.ApiResult;
-import com.yeebotech.shunweioms.order.dto.OrderDTO;
+import com.yeebotech.shunweioms.common.dto.IdsRequest;
+import com.yeebotech.shunweioms.customer.dto.CustomerDTO;
+import com.yeebotech.shunweioms.order.dto.OrderRequestDTO;
+import com.yeebotech.shunweioms.order.dto.OrderResponseDTO;
+import com.yeebotech.shunweioms.order.entity.Order;
 import com.yeebotech.shunweioms.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,29 +35,34 @@ public class OrderController extends BaseController {
     public static final String MESSAGE_SUCCESS_ORDER_DELETED = "Order deleted successfully.";
     public static final String MESSAGE_SUCCESS_ORDER_RETRIEVED = "Successfully retrieved order.";
     public static final String MESSAGE_SUCCESS_ORDERS_RETRIEVED = "Successfully retrieved all orders.";
+    public static final String MESSAGE_NO_ORDER_WITH_ID = "No order found with the given ID.";
 
     @Operation(summary = "Create a new order", description = "Creates a new order in the system")
     @PostMapping
-    public ResponseEntity<ApiResult<OrderDTO>> createOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<ApiResult<OrderResponseDTO>> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
         return handleRequest(() -> {
-            OrderDTO createdOrder = orderService.createOrder(orderDTO);
+            OrderResponseDTO createdOrder = orderService.createOrder(orderRequestDTO);
             return ApiResult.success(createdOrder, ApiConstants.CODE_BUSINESS_SUCCESS, MESSAGE_SUCCESS_ORDER_CREATED);
         });
     }
 
     @Operation(summary = "Update an existing order", description = "Updates an existing order")
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResult<OrderDTO>> updateOrder(@PathVariable Long id, @RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<ApiResult<OrderResponseDTO>> updateOrder(@PathVariable Long id, @RequestBody OrderRequestDTO orderRequestDTO) {
         return handleRequest(() -> {
-            OrderDTO updatedOrder = orderService.updateOrder(id, orderDTO);
+            OrderResponseDTO updatedOrder = orderService.updateOrder(id, orderRequestDTO);
             return ApiResult.success(updatedOrder, ApiConstants.CODE_BUSINESS_SUCCESS, MESSAGE_SUCCESS_ORDER_UPDATED);
         });
     }
 
     @Operation(summary = "Delete multiple orders", description = "Removes multiple orders from the system")
     @DeleteMapping("/batch")
-    public ResponseEntity<ApiResult<Void>> deleteOrders(@RequestBody List<Long> ids) {
+    public ResponseEntity<ApiResult<Void>> deleteOrders(@RequestBody IdsRequest idsRequest) {
         return handleRequest(() -> {
+            List<Long> ids = idsRequest.getIds();
+            if (ids == null || ids.isEmpty()) {
+                return ApiResult.error(ApiConstants.CODE_BAD_REQUEST, "IDs are required", "The provided IDs list is either null or empty.");
+            }
             orderService.deleteOrders(ids);
             return ApiResult.success(null, ApiConstants.CODE_BUSINESS_SUCCESS, MESSAGE_SUCCESS_ORDER_DELETED);
         });
@@ -60,18 +70,20 @@ public class OrderController extends BaseController {
 
     @Operation(summary = "Get order by ID", description = "Retrieve a specific order by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResult<OrderDTO>> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<ApiResult<OrderResponseDTO>> getOrderById(@PathVariable Long id) {
         return handleRequest(() -> {
-            OrderDTO orderDTO = orderService.getOrderById(id);
+            OrderResponseDTO orderDTO = orderService.getOrderById(id);
             return ApiResult.success(orderDTO, ApiConstants.CODE_BUSINESS_SUCCESS, MESSAGE_SUCCESS_ORDER_RETRIEVED);
         });
     }
 
     @Operation(summary = "Search orders", description = "Search orders with filters")
     @GetMapping("/search")
-    public ResponseEntity<ApiResult<Page<OrderDTO>>> searchOrders(@RequestParam Map<String, String> searchParams, Pageable pageable) {
+    public ResponseEntity<ApiResult<Page<OrderResponseDTO>>> searchOrders(@RequestParam Map<String, String> searchParams,  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return handleRequest(() -> {
-            Page<OrderDTO> orders = orderService.searchOrders(searchParams, pageable);
+            Page<OrderResponseDTO> orders = orderService.searchOrders(searchParams, pageable);
             return ApiResult.success(orders, ApiConstants.CODE_BUSINESS_SUCCESS, MESSAGE_SUCCESS_ORDERS_RETRIEVED);
         });
     }
