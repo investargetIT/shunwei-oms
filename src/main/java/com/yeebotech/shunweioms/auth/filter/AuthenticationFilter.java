@@ -1,5 +1,6 @@
 package com.yeebotech.shunweioms.auth.filter;
 
+import com.yeebotech.shunweioms.auth.dto.TokenRequest;
 import com.yeebotech.shunweioms.auth.dto.UserCheckResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +75,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
+            TokenRequest tokenRequest = new TokenRequest(token);
             UserCheckResponse userCheckResponse = webClient
-                    .get()
-                    .uri("/user/user-check?token=" + token)
+                    .post()
+                    .uri("/auth/check-token")
+                    .bodyValue(tokenRequest)  // 将 TokenRequest 作为请求体，发送 JSON
                     .retrieve()
                     .bodyToMono(UserCheckResponse.class)
                     .block();
@@ -84,9 +87,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             // 根据返回的数据判断 token 是否有效
             return userCheckResponse != null
                     && userCheckResponse.getCode() == 200
-                    && userCheckResponse.isSuccess()
-                    && userCheckResponse.getData() != null
-                    && userCheckResponse.getData().isHasLoginUser();
+                    && userCheckResponse.getData().getExpiresIn() != null // 确保不为空
+                    && userCheckResponse.getData().getExpiresIn() > 0; // 确保大于 0
+
         } catch (Exception e) {
             logger.error("Token validation error", e);
             return false; // 如果出现任何异常，则认为 token 无效

@@ -10,7 +10,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient(WebClient.Builder builder) {
         return builder
-                .baseUrl("https://user.peidigroup.cn")  // 用户认证系统的基础 URL
+                .baseUrl("http://localhost:8082")  // 用户认证系统的基础 URL
                 .build();
     }
 }
