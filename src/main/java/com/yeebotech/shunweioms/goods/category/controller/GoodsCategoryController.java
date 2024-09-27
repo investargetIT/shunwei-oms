@@ -97,4 +97,17 @@ public class GoodsCategoryController extends BaseController {
             return ApiResult.success(categoryPage, ApiConstants.CODE_BUSINESS_SUCCESS, ApiConstants.MESSAGE_SUCCESS_CATEGORIES_RETRIEVED);
         });
     }
+
+    @GetMapping("/all")
+    @Operation(summary = "Get all categories", responses = {
+            @ApiResponse(description = "Categories retrieved successfully", responseCode = "200"),
+            @ApiResponse(description = "Error retrieving categories", responseCode = "500")
+    })
+    public ResponseEntity<ApiResult<Map<String, List<String>>>> getAllCategories() {
+        return handleRequest(() -> {
+            Map<String, List<String>> categories = goodsCategoryService.getAllCategories();
+            return ApiResult.success(categories, ApiConstants.CODE_BUSINESS_SUCCESS, ApiConstants.MESSAGE_SUCCESS_CATEGORIES_RETRIEVED);
+        });
+    }
+
 }

@@ -18,4 +18,7 @@ public interface GoodsCategoryService {
 
     // 修改 Map 类型为 String 类型，以匹配实现类中的参数
     Page<GoodsCategoryDTO> searchCategories(Map<String, String> searchParams, Pageable pageable);
+
+    // 新增方法获取所有商品分类
+    Map<String, List<String>> getAllCategories();
 }

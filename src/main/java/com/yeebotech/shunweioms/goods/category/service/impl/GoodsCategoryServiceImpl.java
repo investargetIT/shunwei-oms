@@ -17,10 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GoodsCategoryServiceImpl implements GoodsCategoryService {
@@ -127,4 +125,33 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         BeanUtils.copyProperties(goodsCategory, dto);
         return dto;
     }
+
+    @Override
+    public Map<String, List<String>> getAllCategories() {
+        List<GoodsCategory> categories = goodsCategoryRepository.findAll();
+
+        // 用于存储去重后的字段值
+        Set<String> parentCategories = new HashSet<>();
+        Set<String> categoriesSet = new HashSet<>();
+        Set<String> subCategories = new HashSet<>();
+        Set<String> names = new HashSet<>();
+
+        // 遍历分类并收集去重的值
+        for (GoodsCategory category : categories) {
+            parentCategories.add(category.getParentCategory());
+            categoriesSet.add(category.getCategory());
+            subCategories.add(category.getSubCategory());
+            names.add(category.getName());
+        }
+
+        // 构建返回结果
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("parentCategory", new ArrayList<>(parentCategories));
+        result.put("category", new ArrayList<>(categoriesSet));
+        result.put("subCategory", new ArrayList<>(subCategories));
+        result.put("name", new ArrayList<>(names));
+
+        return result;
+    }
+
 }
