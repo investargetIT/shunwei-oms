@@ -8,10 +8,10 @@
 		<version>3.3.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.yeebotech</groupId>
+	<groupId>com.shunwei</groupId>
 	<artifactId>shunwei-oms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>shunwei-oms</name>
+	<name>oms</name>
 	<description>shunwei-oms</description>
 	<url/>
 	<licenses>
@@ -130,6 +130,13 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version> <!-- 确保使用与 Spring Boot 3.x 兼容的版本 -->
 		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.7.0</version>  <!-- 确保使用最新版本 -->
+		</dependency>
+
 
 	</dependencies>
 
