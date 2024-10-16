@@ -11,8 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -128,6 +130,20 @@ public class SupplierController extends BaseController {
                     suppliersPage,
                     ApiConstants.CODE_BUSINESS_SUCCESS,
                     ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_RETRIEVED
+            );
+        });
+    }
+
+    // Excel 文件导入供应商数据
+    @Operation(summary = "Import suppliers from Excel", description = "Imports suppliers data from an Excel file")
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResult<Void>> importSuppliersFromExcel(@RequestParam("file") MultipartFile file) {
+        return handleRequest(() -> {
+            supplierService.importSuppliersFromExcel(file);
+            return ApiResult.success(
+                    null,
+                    ApiConstants.CODE_BUSINESS_SUCCESS,
+                    ApiConstants.MESSAGE_SUCCESS_SUPPLIERS_IMPORTED
             );
         });
     }

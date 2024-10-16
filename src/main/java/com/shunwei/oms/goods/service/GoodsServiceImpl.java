@@ -10,6 +10,8 @@ import com.shunwei.oms.supplier.dto.SupplierDTO;
 import com.shunwei.oms.supplier.entity.Supplier;
 import com.shunwei.oms.supplier.repository.SupplierRepository;
 import com.shunwei.oms.goods.entity.Goods;
+import com.shunwei.oms.supplier.service.SupplierService;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GoodsServiceImpl implements GoodsService {
@@ -133,5 +141,114 @@ public class GoodsServiceImpl implements GoodsService {
         return dto;
     }
 
+    @Override
+    public void importGoodsFromExcel(MultipartFile file) throws IOException {
+        List<Goods> goodsList = new ArrayList<>();
+
+        // 读取 Excel 文件
+        try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // 跳过表头
+                Goods goods = new Goods();
+
+                // 读取 Excel 行的值并设置到 Goods 对象
+                goods.setInternalCode(getCellValue(row.getCell(1)));
+                goods.setExternalCode(getCellValue(row.getCell(2)));
+                goods.setName(getCellValue(row.getCell(6)));
+                goods.setBrand(getCellValue(row.getCell(8)));
+                goods.setUsageLocation(getCellValue(row.getCell(10)));
+                goods.setUnit(getCellValue(row.getCell(11)));
+                goods.setBoxStandards(getCellValue(row.getCell(12)));
+
+                // 转换价格等字段，处理可能的异常
+                goods.setCostPrice(parseFloatSafe(getCellValue(row.getCell(13))));
+                goods.setSellingPrice(parseFloatSafe(getCellValue(row.getCell(14))));
+                goods.setGrossMargin(parseFloatSafe(getCellValue(row.getCell(15))));
+                goods.setLeadTime(getCellValue(row.getCell(16)));
+
+                // 使用 parseIntSafe 处理最小订购量
+                Integer moq = parseIntSafe(getCellValue(row.getCell(18)));
+                if (moq != null) {
+                    goods.setMoq(moq); // 这里 moq 是 Integer 类型
+                } else {
+                    continue; // 跳过当前行或记录日志
+                }
+
+                // 查询 goods_category 表以设置 goodsCategoryId
+                Long categoryId = findCategoryId(
+                        getCellValue(row.getCell(3)),  // 分类
+                        getCellValue(row.getCell(4)),  // 型号/规格
+                        getCellValue(row.getCell(5))    // 容量/颜色
+                );
+
+                // 仅在找到有效的 categoryId 时设置
+                if (categoryId != null) {
+                    goods.setGoodsCategoryId(categoryId);
+                } else {
+                    continue; // 跳过当前行，或记录日志以便调试
+                }
+
+                // 查询 suppliers 表以设置 supplierId
+                Long supplierId = findSupplierId(getCellValue(row.getCell(17))); // 供应商名称
+
+                // 仅在找到有效的 supplierId 时设置
+                if (supplierId != null) {
+                    goods.setSupplierId(supplierId);
+                } else {
+                    continue; // 跳过当前行，或记录日志以便调试
+                }
+
+                goodsList.add(goods);
+            }
+        }
+
+        // 保存商品到数据库
+        goodsRepository.saveAll(goodsList);
+    }
+
+    // 辅助方法，确保 Cell 值不会为 null
+    private String getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        return cell.getCellType() == CellType.NUMERIC
+                ? String.valueOf((int) cell.getNumericCellValue())
+                : cell.getStringCellValue();
+    }
+
+    // 安全地转换为 float 类型，处理空字符串和异常
+    private float parseFloatSafe(String value) {
+        try {
+            return Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            return 0f; // 默认值为 0
+        }
+    }
+
+    // 安全地转换为 int 类型
+    private Integer parseIntSafe(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; // 或者返回默认值，比如 0，视需求而定
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            // 处理转换失败的情况，可以记录日志或抛出自定义异常
+            return null; // 或者根据需求抛出异常
+        }
+    }
+
+    // 查找 goods_category 表
+    private Long findCategoryId(String category, String spec, String capacity) {
+        // 使用 goodsCategoryRepository 或类似的服务查找 categoryId
+        return goodsCategoryRepository.findIdByDetails(category, spec, capacity);
+    }
+
+    // 查找 suppliers 表
+    private Long findSupplierId(String supplierName) {
+        // 使用 supplierRepository 或类似的服务查找 supplierId
+        return supplierRepository.findIdByName(supplierName);
+    }
 
 }

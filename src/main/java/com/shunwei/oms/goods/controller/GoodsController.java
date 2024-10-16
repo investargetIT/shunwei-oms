@@ -12,9 +12,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -78,4 +81,19 @@ public class GoodsController extends BaseController {
             return ApiResult.success(null, ApiConstants.CODE_BUSINESS_SUCCESS, ApiConstants.MESSAGE_SUCCESS_GOODS_DELETED);
         });
     }
+
+    @Operation(summary = "Import goods from Excel", description = "Upload an Excel file to import goods data.")
+    @PostMapping(value ="/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResult<Void>> importGoodsFromExcel(@RequestParam("file") MultipartFile file) {
+        return handleRequest(() -> {
+            try {
+                goodsService.importGoodsFromExcel(file);
+                return ApiResult.success(null, ApiConstants.CODE_BUSINESS_SUCCESS, ApiConstants.MESSAGE_SUCCESS_GOODS_IMPORTED);
+            } catch (Exception e) {
+                // 在这里调用 error 方法，传入所需的参数
+                return ApiResult.error(ApiConstants.CODE_BUSINESS_ERROR, e.getMessage(), "导入商品时发生错误");
+            }
+        });
+    }
+
 }

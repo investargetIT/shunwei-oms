@@ -5,18 +5,25 @@ import com.shunwei.oms.supplier.repository.SupplierRepository;
 import com.shunwei.oms.supplier.service.specification.SupplierSpecification;
 import com.shunwei.oms.common.util.DateUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -137,4 +144,87 @@ public class SupplierServiceImpl implements SupplierService {
     public List<Supplier> findAllSuppliers() {
         return supplierRepository.findAll();
     }
+
+
+    @Override
+    public void importSuppliersFromExcel(MultipartFile file) {
+        try (InputStream inputStream = file.getInputStream();
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                // 跳过标题行
+                if (row.getRowNum() == 0) {
+                    continue;
+                }
+
+                Supplier.SupplierBuilder supplierBuilder = Supplier.builder();
+                // 自动生成供应商代码
+                String generatedCode = UUID.randomUUID().toString();
+                supplierBuilder.code(generatedCode);
+
+                // 处理供应商名称
+                String name = getStringCellValue(row.getCell(0));
+                if (name == null || name.isEmpty()) {
+                    System.err.println("行 " + row.getRowNum() + ": 供应商名称不能为空");
+                    continue; // 跳过当前行
+                }
+                supplierBuilder.name(name);
+
+                // 处理其他字段，使用同样的方式检查空值
+//                supplierBuilder.category1(getStringCellValue(row.getCell(1))); // 大类
+//                supplierBuilder.category2(getStringCellValue(row.getCell(2))); // 中类
+//                supplierBuilder.category3(getStringCellValue(row.getCell(3))); // 小类
+                supplierBuilder.bankAccount(getStringCellValue(row.getCell(4))); // 银行账户信息
+                supplierBuilder.partnershipCase(getStringCellValue(row.getCell(5))); // 合作案例
+                supplierBuilder.attribute(getStringCellValue(row.getCell(6))); // 供应商属性
+                supplierBuilder.mode(getStringCellValue(row.getCell(7))); // 合作模式
+                supplierBuilder.hotel(getStringCellValue(row.getCell(8))); // 销售范围（酒店）
+                supplierBuilder.status(getStringCellValue(row.getCell(9))); // 状态
+                supplierBuilder.contact(getStringCellValue(row.getCell(10))); // 供应商联系人
+                supplierBuilder.position(getStringCellValue(row.getCell(11))); // 职位
+                supplierBuilder.telephone(getStringCellValue(row.getCell(12))); // 电话
+                supplierBuilder.salesman(getStringCellValue(row.getCell(13))); // 对接人
+                supplierBuilder.contractStatus(getStringCellValue(row.getCell(14))); // 合同状态
+
+                // 处理日期字段
+                supplierBuilder.dealDate(getLocalDate(row.getCell(15))); // 签订日期
+                supplierBuilder.startDate(getLocalDate(row.getCell(16))); // 合同约定生效日期
+                supplierBuilder.endDate(getLocalDate(row.getCell(17))); // 合同约定终止日期
+
+                // 构建 Supplier 实体
+                Supplier supplier = supplierBuilder.build();
+
+                // 保存到数据库
+                saveSupplier(supplier);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("导入 Excel 文件失败: " + e.getMessage());
+        }
+    }
+
+    // 辅助方法：获取字符串单元格值
+    private String getStringCellValue(Cell cell) {
+        if (cell != null && cell.getCellType() == CellType.STRING) {
+            return cell.getStringCellValue();
+        }
+        return null; // 或者根据需要返回默认值
+    }
+
+    // 辅助方法：将 Excel 日期转换为 LocalDate
+    private LocalDate getLocalDate(Cell cell) {
+        if (cell != null) {
+            if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+                return cell.getLocalDateTimeCellValue().toLocalDate();
+            } else if (cell.getCellType() == CellType.STRING) {
+                try {
+                    return LocalDate.parse(cell.getStringCellValue()); // 尝试解析字符串为 LocalDate
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("无效日期格式: " + cell.getStringCellValue());
+                }
+            }
+        }
+        return null; // 返回 null 或者根据需要抛出异常
+    }
+
 }

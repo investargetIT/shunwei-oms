@@ -3,6 +3,7 @@ package com.shunwei.oms.supplier.service;
 import com.shunwei.oms.supplier.entity.Supplier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -19,4 +20,7 @@ public interface SupplierService {
 
     Page<Supplier> searchSuppliers(Map<String, Object> searchParams, Pageable pageable);
     List<Supplier> findAllSuppliers();
+
+    // 新增导入 Excel 文件的方法
+    void importSuppliersFromExcel(MultipartFile file);
 }

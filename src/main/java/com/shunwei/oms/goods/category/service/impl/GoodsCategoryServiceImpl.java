@@ -160,6 +160,4 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 
         return result;
     }
-
-
 }

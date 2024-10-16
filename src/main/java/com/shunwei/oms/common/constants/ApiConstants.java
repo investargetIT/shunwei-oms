@@ -9,11 +9,15 @@ public class ApiConstants {
     public static final String MESSAGE_SUCCESS_SUPPLIER_UPDATED = "Supplier updated successfully.";
     public static final String MESSAGE_SUCCESS_SUPPLIER_DELETED = "Supplier deleted successfully.";
     public static final String MESSAGE_SUCCESS_SUPPLIERS_DELETED = "Suppliers deleted successfully";
+    public static final String MESSAGE_SUCCESS_SUPPLIERS_IMPORTED = "Suppliers imported successfully."; // 新增的导入成功消息
 
     public static final String MESSAGE_SUCCESS_GOODS_RETRIEVED = "Successfully retrieved all goods.";
     public static final String MESSAGE_SUCCESS_GOODS_CREATED = "Goods created successfully.";
     public static final String MESSAGE_SUCCESS_GOODS_UPDATED = "Goods updated successfully.";
     public static final String MESSAGE_SUCCESS_GOODS_DELETED = "Goods deleted successfully";
+
+    public static final String MESSAGE_SUCCESS_GOODS_IMPORTED = "Goods imported successfully."; // 新增的导入成功消息
+
 
     // 新增 GoodsCategory 的成功消息
     public static final String MESSAGE_SUCCESS_CATEGORY_CREATED = "Category created successfully.";
