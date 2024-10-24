@@ -11,7 +11,7 @@ public class GoodsDTO {
     private String internalCode;
     private String externalCode;
     private String name;
-    private String category;
+    //private String category;
     private String picture;
     private String brand;
     private String details;

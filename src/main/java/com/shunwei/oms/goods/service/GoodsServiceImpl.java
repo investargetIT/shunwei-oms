@@ -86,7 +86,7 @@ public class GoodsServiceImpl implements GoodsService {
         dto.setInternalCode(goods.getInternalCode());
         dto.setExternalCode(goods.getExternalCode());
         dto.setName(goods.getName());
-        dto.setCategory(goods.getCategory());
+        //-dto.setCategory(goods.getCategory());
         dto.setPicture(goods.getPicture());
         dto.setBrand(goods.getBrand());
         dto.setDetails(goods.getDetails());

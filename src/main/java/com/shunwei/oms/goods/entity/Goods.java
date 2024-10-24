@@ -24,7 +24,7 @@ public class Goods {
     @Column(nullable = false)
     private String name;
 
-    private String category;
+    //private String category;
     private String picture;
     private String brand;
 
