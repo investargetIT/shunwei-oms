@@ -33,7 +33,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
             response.setStatus(HttpServletResponse.SC_OK);
             return;
         }
@@ -59,7 +59,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             // 设置 CORS 头部
             response.setHeader("Access-Control-Allow-Origin", "*");
             response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 设置403状态码
             return;
         }

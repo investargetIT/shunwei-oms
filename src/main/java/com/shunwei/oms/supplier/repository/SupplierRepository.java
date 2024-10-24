@@ -21,4 +21,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long>, JpaSp
     // 定义根据供应商名称查找供应商 ID 的方法
     @Query("SELECT s.id FROM Supplier s WHERE s.name = :name")
     Long findIdByName(String name);
+    boolean existsByName(String name);
 }

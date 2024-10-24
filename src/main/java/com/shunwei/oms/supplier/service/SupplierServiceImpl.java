@@ -17,13 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -152,50 +150,76 @@ public class SupplierServiceImpl implements SupplierService {
              Workbook workbook = new XSSFWorkbook(inputStream)) {
 
             Sheet sheet = workbook.getSheetAt(0);
+
+            // 校验表头
+            Row headerRow = sheet.getRow(0);
+            if (headerRow == null) {
+                throw new IllegalArgumentException("Excel 文件没有表头行");
+            }
+            List<String> expectedHeaders = Arrays.asList(
+                    "供应商名称", "大类", "中类", "小类", "银行账户信息", "合作案例",
+                    "供应商属性", "合作模式", "销售范围（酒店）", "状态", "供应商联系人",
+                    "职位", "电话", "对接人", "合同状态", "签订日期",
+                    "合同约定生效日期", "合同约定终止日期"
+            );
+
+            for (int i = 0; i < expectedHeaders.size(); i++) {
+                Cell cell = headerRow.getCell(i);
+                if (cell == null || !expectedHeaders.get(i).equals(cell.getStringCellValue())) {
+                    throw new IllegalArgumentException("表头与预期不符，错误在列 " + (i + 1));
+                }
+            }
+
+            // 处理每一行数据
             for (Row row : sheet) {
-                // 跳过标题行
                 if (row.getRowNum() == 0) {
                     continue;
                 }
 
+                // 检查列数
+                if (row.getPhysicalNumberOfCells() < 18) {
+                    System.err.println("行 " + row.getRowNum() + ": 列数不足，跳过当前行");
+                    continue;
+                }
+
                 Supplier.SupplierBuilder supplierBuilder = Supplier.builder();
-                // 自动生成供应商代码
                 String generatedCode = UUID.randomUUID().toString();
                 supplierBuilder.code(generatedCode);
 
-                // 处理供应商名称
                 String name = getStringCellValue(row.getCell(0));
                 if (name == null || name.isEmpty()) {
                     System.err.println("行 " + row.getRowNum() + ": 供应商名称不能为空");
-                    continue; // 跳过当前行
+                    continue;
+                }
+
+                if (supplierRepository.existsByName(name)) {
+                    System.out.println("行 " + row.getRowNum() + ": 供应商名称 '" + name + "' 已存在，跳过当前行");
+                    continue;
                 }
                 supplierBuilder.name(name);
 
-                // 处理其他字段，使用同样的方式检查空值
-//                supplierBuilder.category1(getStringCellValue(row.getCell(1))); // 大类
-//                supplierBuilder.category2(getStringCellValue(row.getCell(2))); // 中类
-//                supplierBuilder.category3(getStringCellValue(row.getCell(3))); // 小类
-                supplierBuilder.bankAccount(getStringCellValue(row.getCell(4))); // 银行账户信息
-                supplierBuilder.partnershipCase(getStringCellValue(row.getCell(5))); // 合作案例
-                supplierBuilder.attribute(getStringCellValue(row.getCell(6))); // 供应商属性
-                supplierBuilder.mode(getStringCellValue(row.getCell(7))); // 合作模式
-                supplierBuilder.hotel(getStringCellValue(row.getCell(8))); // 销售范围（酒店）
-                supplierBuilder.status(getStringCellValue(row.getCell(9))); // 状态
-                supplierBuilder.contact(getStringCellValue(row.getCell(10))); // 供应商联系人
-                supplierBuilder.position(getStringCellValue(row.getCell(11))); // 职位
-                supplierBuilder.telephone(getStringCellValue(row.getCell(12))); // 电话
-                supplierBuilder.salesman(getStringCellValue(row.getCell(13))); // 对接人
-                supplierBuilder.contractStatus(getStringCellValue(row.getCell(14))); // 合同状态
+                // 处理其他字段
+                supplierBuilder.bankAccount(getStringCellValue(row.getCell(4)));
+                supplierBuilder.partnershipCase(getStringCellValue(row.getCell(5)));
+                supplierBuilder.attribute(getStringCellValue(row.getCell(6)));
+                supplierBuilder.mode(getStringCellValue(row.getCell(7)));
+                supplierBuilder.hotel(getStringCellValue(row.getCell(8)));
+                supplierBuilder.status(getStringCellValue(row.getCell(9)));
+                supplierBuilder.contact(getStringCellValue(row.getCell(10)));
+                supplierBuilder.position(getStringCellValue(row.getCell(11)));
+                String phoneNumber = getCellValue(row.getCell(12));
+                if (phoneNumber.length() > 10) {
+                    // 可能是科学计数法，需要处理
+                    phoneNumber = new BigDecimal(phoneNumber).toPlainString();
+                }
+                supplierBuilder.telephone(phoneNumber);
+                supplierBuilder.salesman(getStringCellValue(row.getCell(13)));
+                supplierBuilder.contractStatus(getStringCellValue(row.getCell(14)));
+                supplierBuilder.dealDate(getLocalDate(row.getCell(15)));
+                supplierBuilder.startDate(getLocalDate(row.getCell(16)));
+                supplierBuilder.endDate(getLocalDate(row.getCell(17)));
 
-                // 处理日期字段
-                supplierBuilder.dealDate(getLocalDate(row.getCell(15))); // 签订日期
-                supplierBuilder.startDate(getLocalDate(row.getCell(16))); // 合同约定生效日期
-                supplierBuilder.endDate(getLocalDate(row.getCell(17))); // 合同约定终止日期
-
-                // 构建 Supplier 实体
                 Supplier supplier = supplierBuilder.build();
-
-                // 保存到数据库
                 saveSupplier(supplier);
             }
         } catch (Exception e) {
@@ -203,12 +227,33 @@ public class SupplierServiceImpl implements SupplierService {
         }
     }
 
+
     // 辅助方法：获取字符串单元格值
     private String getStringCellValue(Cell cell) {
         if (cell != null && cell.getCellType() == CellType.STRING) {
             return cell.getStringCellValue();
         }
         return null; // 或者根据需要返回默认值
+    }
+
+    private String getCellValue(Cell cell) {
+        if (cell == null) {
+            return ""; // 如果单元格为空，返回空字符串
+        }
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue(); // 字符串类型
+            case NUMERIC:
+                // 处理数字类型，返回字符串
+                return String.valueOf(cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue()); // 布尔类型
+            case FORMULA:
+                return cell.getCellFormula(); // 公式类型
+            default:
+                return ""; // 其他类型返回空字符串
+        }
     }
 
     // 辅助方法：将 Excel 日期转换为 LocalDate

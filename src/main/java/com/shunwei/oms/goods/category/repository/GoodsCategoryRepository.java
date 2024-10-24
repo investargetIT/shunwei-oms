@@ -18,5 +18,5 @@ public interface GoodsCategoryRepository extends JpaRepository<GoodsCategory, Lo
 
     // 根据分类名称、子分类名称和具体分类名称查找分类 ID
     @Query("SELECT gc.id FROM GoodsCategory gc WHERE gc.category = :categoryName AND gc.subCategory = :subCategoryName AND gc.parentCategory = :parentCategoryName")
-    Long findIdByDetails(String categoryName, String subCategoryName, String parentCategoryName);
+    Long findIdByDetails(String parentCategoryName, String categoryName, String subCategoryName);
 }

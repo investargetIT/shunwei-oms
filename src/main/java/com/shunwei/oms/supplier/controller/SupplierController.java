@@ -99,7 +99,7 @@ public class SupplierController extends BaseController {
         });
     }
 
-    @Operation(summary = "Delete multiple suppliers", description = "Removes multiple suppliers from the system")
+    @Operation(summary = "Delete multiple suppliers", description = "Removes multiple suppliers from the system2222")
     @DeleteMapping("/batch")
     public ResponseEntity<ApiResult<Void>> deleteSuppliers(@RequestBody IdsRequest idsRequest) {
         return handleRequest(() -> {

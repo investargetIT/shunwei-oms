@@ -14,4 +14,6 @@ public interface GoodsRepository extends JpaRepository<Goods, Long>, JpaSpecific
     @Transactional
     @Query("DELETE FROM Goods g WHERE g.id IN :ids")
     void deleteByIds(List<Long> ids);
+
+    boolean existsByName(String name);
 }
